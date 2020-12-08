@@ -17,7 +17,7 @@ class _SearchPageState extends State<SearchPage> {
     return Card(
       child: Row(
         children: [
-          Image.network(book.image),
+          Image.network(book.image), //TODO: Image Cache
           Expanded(
             child: Column(
               children: [

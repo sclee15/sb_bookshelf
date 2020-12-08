@@ -12,6 +12,8 @@ class SearchApi {
 
   Future<List<Book>> initialQuery(String query) async {
     final resource = apiEndPoint.host + '/1.0/search/$query';
+    //TODO: urlEncode Query for multiple keywords
+    //TODO: retryOnFail, Caching
     final resp = await http.get(resource);
     if (resp.statusCode != 200) {
       throw FormatException('server returned an unepxected message');
