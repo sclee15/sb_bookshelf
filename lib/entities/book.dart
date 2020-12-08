@@ -27,7 +27,7 @@ class Book {
         url: json[BookFieldNames.url] as String);
   }
 
-  // Normally I would like to use Freezed, but for the no 3rd party requrement, I will do it manually
+  // Normally I would like to use Freezed, but for the no 3rd party requrement, I will do it manually for immutable objects
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
