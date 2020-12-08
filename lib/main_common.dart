@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sb_bookshelf/pages/search_page.dart';
 
 class BookShelfApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -9,7 +10,7 @@ class BookShelfApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: SizedBox(), // placeholder for now
+      home: SearchPage(), // placeholder for now
     );
   }
 }
