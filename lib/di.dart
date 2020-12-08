@@ -8,9 +8,9 @@ class DI {
   }
   DI._internal();
 
-  ApiEnpoint apiEnpoint;
-  putApiEndpoint(ApiEnpoint apiEnpoint) {
-    this.apiEnpoint = apiEnpoint;
+  ApiEndpoint apiEndpoint;
+  putApiEndpoint(ApiEndpoint apiEnpoint) {
+    this.apiEndpoint = apiEnpoint;
   }
 }
 

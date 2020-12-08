@@ -5,6 +5,6 @@ import 'main_common.dart';
 
 void main() {
   //Inject ApiEnpoint for dev enviornment
-  di.putApiEndpoint(ApiEnpoint('https://localhost'));
+  di.putApiEndpoint(ApiEndpoint('https://localhost'));
   runApp(BookShelfApp());
 }

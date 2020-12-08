@@ -1,4 +1,4 @@
-class ApiEnpoint {
+class ApiEndpoint {
   final host;
-  ApiEnpoint(this.host);
+  ApiEndpoint(this.host);
 }
