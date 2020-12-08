@@ -34,9 +34,10 @@ void main() {
   test('book != book', () async {
     final Map<String, dynamic> map = json.decode(aBookString);
     final aBook = Book.fromMap(map);
-    //book name changed
+    //Book name changed
     map[BookFieldNames.title] += " (2nd Edition)";
     final bBook = Book.fromMap(map);
+    //Since aBook.title != bBook title, aBook != bBook
     expect(aBook, isNot(equals(bBook)));
   });
 }
