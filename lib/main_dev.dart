@@ -4,7 +4,7 @@ import 'di.dart';
 import 'main_common.dart';
 
 void main() {
-  //Inject ApiEnpoint for production enviornment
-  di.putApiEndpoint(ApiEnpoint('https://api.itbook.store'));
+  //Inject ApiEnpoint for dev enviornment
+  di.putApiEndpoint(ApiEnpoint('https://localhost'));
   runApp(BookShelfApp());
 }
