@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sb_bookshelf/gen_try.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:sb_bookshelf/api/search_api.dart';
 import 'package:sb_bookshelf/cache_map.dart';
@@ -28,7 +29,8 @@ class _DetailBookPageState extends State<DetailBookPage> {
   }
 
   afterInit() async {
-    bookDetail = await _searchApi.detail(widget.book.isbn13);
+    bookDetail = await GenTry.execute<BookDetail>(
+        () => _searchApi.detail(widget.book.isbn13));
     final note = await CacheMapIsolate().get("__NOTE__:${widget.book.isbn13}");
     if (note != null) {
       _tecMemo.text = note;
