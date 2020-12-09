@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:sb_bookshelf/entities/book.dart';
+import 'package:sb_bookshelf/pages/detail_book_page.dart';
 import 'package:sb_bookshelf/stores/search_store.dart';
 
 import '../cache_image_file.dart';
@@ -26,31 +27,36 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Widget buildBookCard(Book book) {
-    return Card(
-      child: Row(
-        children: [
-          FutureBuilder<File>(
-            future: CachedImageFile.getImageFile(book.image),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return Image.file(snapshot.data);
-              } else {
-                return Text('downloading');
-              }
-            },
-          ),
-          Expanded(
-            child: Column(
-              children: [
-                Text(book.title),
-                Text(book.subtitle),
-                Text(book.price),
-                Text(book.isbn13),
-                Text(book.url),
-              ],
+    return InkWell(
+      onTap: () {
+        showBook(book);
+      },
+      child: Card(
+        child: Row(
+          children: [
+            FutureBuilder<File>(
+              future: CachedImageFile.getImageFile(book.image),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Image.file(snapshot.data);
+                } else {
+                  return Text('downloading');
+                }
+              },
             ),
-          ),
-        ],
+            Expanded(
+              child: Column(
+                children: [
+                  Text(book.title),
+                  Text(book.subtitle),
+                  Text(book.price),
+                  Text(book.isbn13),
+                  Text(book.url),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -61,6 +67,11 @@ class _SearchPageState extends State<SearchPage> {
     if (maxScroll - currentScroll <= _scrollThreshold) {
       searchStore.fetchNextPage(tecQuery.text);
     }
+  }
+
+  showBook(Book book) {
+    Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => DetailBookPage(book: book)));
   }
 
   @override
