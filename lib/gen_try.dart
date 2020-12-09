@@ -10,7 +10,7 @@ class GenTry {
     try {
       final tried = await cb();
       return tried;
-    } catch (e) {
+    } catch (_) {
       if (retry < maxTry) {
         //delay function to reduce server load
         await Future.delayed(Duration(milliseconds: 200 * retry));

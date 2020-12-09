@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:sb_bookshelf/gen_try.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -15,12 +17,14 @@ class DetailBookPage extends StatefulWidget {
 }
 
 class _DetailBookPageState extends State<DetailBookPage> {
+  static const String _errorKey = 'DB';
   final _searchApi = SearchApi();
   final _defaultHeaderStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.w600);
   final _tecMemo = TextEditingController();
 
   BookDetail _bookDetail; //nullable
+  String _errorMessage = '';
 
   @override
   void initState() {
@@ -29,13 +33,42 @@ class _DetailBookPageState extends State<DetailBookPage> {
   }
 
   _afterInit() async {
-    _bookDetail = await GenTry.execute<BookDetail>(
-        () => _searchApi.detail(widget.book.isbn13));
-    final note = await CacheMapIsolate().get("__NOTE__:${widget.book.isbn13}");
-    if (note != null) {
-      _tecMemo.text = note;
+    setState(() {
+      _errorMessage = '';
+    });
+    try {
+      final result = await GenTry.execute<BookDetail>(
+          () => _searchApi.detail(widget.book.isbn13));
+      final note =
+          await CacheMapIsolate().get("__NOTE__:${widget.book.isbn13}");
+      setState(() {
+        _bookDetail = result;
+        if (note != null) {
+          _tecMemo.text = note;
+        }
+      });
+    } on OSError {
+      setState(() {
+        _errorMessage = 'Cannot find the server (errNo: ${_errorKey}000)';
+      });
+    } on SocketException {
+      setState(() {
+        _errorMessage = 'Cannot reach to the server (errNo: ${_errorKey}001)';
+      });
+    } on HttpException {
+      setState(() {
+        _errorMessage = 'Cannot fetch from the server (errNo: ${_errorKey}002)';
+      });
+    } on FormatException {
+      setState(() {
+        _errorMessage =
+            'Server returned an unepxected message (errNo: ${_errorKey}003)';
+      });
+    } catch (_) {
+      setState(() {
+        _errorMessage = 'Unknown error occured (errNo: ${_errorKey}004)';
+      });
     }
-    setState(() {});
   }
 
   Future<void> _launchInBrowser(String url) async {
@@ -80,7 +113,9 @@ class _DetailBookPageState extends State<DetailBookPage> {
   }
 
   Widget _buildBody() {
+    if (_errorMessage.isNotEmpty) return Text(_errorMessage);
     if (_bookDetail == null) return LinearProgressIndicator();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

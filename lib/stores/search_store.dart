@@ -68,7 +68,7 @@ class SearchStore {
               'Server returned an unepxected message (errNo: ${_errorKey}003)',
           searchResult: null,
           fetching: false));
-    } catch (e) {
+    } catch (_) {
       _updateState(state.copyFrom(
           errorMessage: 'Unknown error occured (errNo: ${_errorKey}004)',
           searchResult: null,
@@ -119,7 +119,7 @@ class SearchStore {
               'Server returned an unepxected message (errNo: ${_errorKey}003)',
           searchResult: null,
           fetching: false));
-    } catch (e) {
+    } catch (_) {
       _updateState(state.copyFrom(
           errorMessage: 'Unknown error occured (errNo: ${_errorKey}004)',
           searchResult: null,
