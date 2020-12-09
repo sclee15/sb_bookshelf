@@ -39,7 +39,7 @@ class _DetailBookPageState extends State<DetailBookPage> {
     try {
       final result = await GenTry.execute<BookDetail>(
           () => _searchApi.detail(widget.book.isbn13));
-      final note =
+      final String note =
           await CacheMapIsolate().get("__NOTE__:${widget.book.isbn13}");
       setState(() {
         _bookDetail = result;

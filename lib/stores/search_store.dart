@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:meta/meta.dart';
 import 'package:sb_bookshelf/api/search_api.dart';
 import 'package:sb_bookshelf/cache_map.dart';
@@ -48,10 +49,14 @@ class SearchStore {
         final searchResult = await GenTry.execute<SearchResult>(
             () => _searchApi.initialQuery(query));
         _updateState(state.copyFrom(searchResult: searchResult));
-        CacheMapIsolate().put('__query:$query', searchResult.toMap());
+        final mappedSearchedResult =
+            await compute(_toMapSearchResult, searchResult);
+        CacheMapIsolate().put('__query:$query', mappedSearchedResult);
       } else {
-        _updateState(
-            state.copyFrom(searchResult: SearchResult.fromMap(cached)));
+        final parsed =
+            await compute(_parseSearchResult, cached as Map<String, dynamic>);
+
+        _updateState(state.copyFrom(searchResult: parsed));
       }
     } on OSError {
       _updateState(state.copyFrom(
@@ -102,7 +107,9 @@ class SearchStore {
           page: searchResult.page,
           total: searchResult.total,
           books: _searchResult.books..addAll(searchResult.books));
-      CacheMapIsolate().put('__query:$query', newSearchResult.toMap());
+      final mappedSearchedResult =
+          await compute(_toMapSearchResult, newSearchResult);
+      CacheMapIsolate().put('__query:$query', mappedSearchedResult);
       _updateState(state.copyFrom(searchResult: newSearchResult));
     } on OSError {
       _updateState(state.copyFrom(
@@ -143,4 +150,12 @@ class SearchStore {
   void dispose() {
     _streamController.close();
   }
+}
+
+SearchResult _parseSearchResult(Map<String, dynamic> map) {
+  return SearchResult.fromMap(map);
+}
+
+Map<String, dynamic> _toMapSearchResult(SearchResult searchResult) {
+  return searchResult.toMap();
 }
