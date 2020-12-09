@@ -1,5 +1,5 @@
 import 'package:meta/meta.dart';
-import 'package:sb_bookshelf/entities/book.dart'; //Flutter's default meta package
+import 'package:sb_bookshelf/entities/book.dart';
 
 class SearchResult {
   final String error;

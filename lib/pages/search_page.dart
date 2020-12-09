@@ -15,8 +15,8 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-  SearchStore searchStore = SearchStore();
-  TextEditingController tecQuery = TextEditingController();
+  SearchStore _searchStore = SearchStore();
+  TextEditingController _tecQuery = TextEditingController();
   final _scrollController = ScrollController();
   final _scrollThreshold = 300.0;
 
@@ -28,14 +28,14 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   void dispose() {
-    searchStore.dispose();
+    _searchStore.dispose();
     super.dispose();
   }
 
-  Widget buildBookCard(Book book) {
+  Widget _buildBookCard(Book book) {
     return InkWell(
       onTap: () {
-        showBook(book);
+        _showBook(book);
       },
       child: Card(
         child: Row(
@@ -71,11 +71,11 @@ class _SearchPageState extends State<SearchPage> {
     final maxScroll = _scrollController.position.maxScrollExtent;
     final currentScroll = _scrollController.position.pixels;
     if (maxScroll - currentScroll <= _scrollThreshold) {
-      searchStore.fetchNextPage(tecQuery.text);
+      _searchStore.fetchNextPage(_tecQuery.text);
     }
   }
 
-  showBook(Book book) {
+  _showBook(Book book) {
     Navigator.of(context).push(
         MaterialPageRoute(builder: (context) => DetailBookPage(book: book)));
   }
@@ -87,13 +87,13 @@ class _SearchPageState extends State<SearchPage> {
       body: Column(
         children: [
           TextField(
-            controller: tecQuery,
+            controller: _tecQuery,
             onSubmitted: (val) {
-              searchStore.search(val);
+              _searchStore.search(val);
             },
           ),
           StreamBuilder<SearchState>(
-              stream: searchStore.stream,
+              stream: _searchStore.stream,
               builder: (context, snapshot) {
                 if (snapshot.hasData && snapshot.data.fetching) {
                   return LinearProgressIndicator();
@@ -101,7 +101,7 @@ class _SearchPageState extends State<SearchPage> {
                 return SizedBox(height: 0);
               }),
           StreamBuilder<SearchState>(
-            stream: searchStore.stream,
+            stream: _searchStore.stream,
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return LinearProgressIndicator();
@@ -126,7 +126,7 @@ class _SearchPageState extends State<SearchPage> {
                         Text('Looking for more books!')
                       ]);
                     } else {
-                      return buildBookCard(
+                      return _buildBookCard(
                           snapshot.data.searchResult.books.elementAt(index));
                     }
                   },

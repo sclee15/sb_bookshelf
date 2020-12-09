@@ -42,10 +42,10 @@ class CacheMapIsolate {
   }
 
   CacheMapIsolate._internal() {
-    afterInit();
+    _afterInit();
   }
 
-  afterInit() async {
+  _afterInit() async {
     _receivePort.listen((message) {
       if (_sendPort == null) {
         _sendPort = message;

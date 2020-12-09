@@ -27,7 +27,7 @@ class SearchState {
 }
 
 class SearchStore {
-  static const String errorKey = 'SS'; //Stands for SearchStore
+  static const String _errorKey = 'SS'; //Stands for SearchStore
   final _streamController = StreamController<SearchState>.broadcast();
   Stream<SearchState> get stream => _streamController.stream;
   final _searchApi = SearchApi();
@@ -49,28 +49,28 @@ class SearchStore {
       }
     } on OSError {
       _updateState(state.copyFrom(
-          errorMessage: 'Cannot find the server (errNo: ${errorKey}000)',
+          errorMessage: 'Cannot find the server (errNo: ${_errorKey}000)',
           searchResult: null,
           fetching: false));
     } on SocketException {
       _updateState(state.copyFrom(
-          errorMessage: 'Cannot reach to the server (errNo: ${errorKey}001)',
+          errorMessage: 'Cannot reach to the server (errNo: ${_errorKey}001)',
           searchResult: null,
           fetching: false));
     } on HttpException {
       _updateState(state.copyFrom(
-          errorMessage: 'Cannot fetch from the server (errNo: ${errorKey}002)',
+          errorMessage: 'Cannot fetch from the server (errNo: ${_errorKey}002)',
           searchResult: null,
           fetching: false));
     } on FormatException {
       _updateState(state.copyFrom(
           errorMessage:
-              'Server returned an unepxected message (errNo: ${errorKey}003)',
+              'Server returned an unepxected message (errNo: ${_errorKey}003)',
           searchResult: null,
           fetching: false));
     } catch (e) {
       _updateState(state.copyFrom(
-          errorMessage: 'Unknown error occured (errNo: ${errorKey}004)',
+          errorMessage: 'Unknown error occured (errNo: ${_errorKey}004)',
           searchResult: null,
           fetching: false));
     } finally {
@@ -100,28 +100,28 @@ class SearchStore {
       _updateState(state.copyFrom(searchResult: newSearchResult));
     } on OSError {
       _updateState(state.copyFrom(
-          errorMessage: 'Cannot find the server (errNo: ${errorKey}000)',
+          errorMessage: 'Cannot find the server (errNo: ${_errorKey}000)',
           searchResult: null,
           fetching: false));
     } on SocketException {
       _updateState(state.copyFrom(
-          errorMessage: 'Cannot reach to the server (errNo: ${errorKey}001)',
+          errorMessage: 'Cannot reach to the server (errNo: ${_errorKey}001)',
           searchResult: null,
           fetching: false));
     } on HttpException {
       _updateState(state.copyFrom(
-          errorMessage: 'Cannot fetch from the server (errNo: ${errorKey}002)',
+          errorMessage: 'Cannot fetch from the server (errNo: ${_errorKey}002)',
           searchResult: null,
           fetching: false));
     } on FormatException {
       _updateState(state.copyFrom(
           errorMessage:
-              'Server returned an unepxected message (errNo: ${errorKey}003)',
+              'Server returned an unepxected message (errNo: ${_errorKey}003)',
           searchResult: null,
           fetching: false));
     } catch (e) {
       _updateState(state.copyFrom(
-          errorMessage: 'Unknown error occured (errNo: ${errorKey}004)',
+          errorMessage: 'Unknown error occured (errNo: ${_errorKey}004)',
           searchResult: null,
           fetching: false));
     } finally {

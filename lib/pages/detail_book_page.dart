@@ -20,16 +20,16 @@ class _DetailBookPageState extends State<DetailBookPage> {
       TextStyle(fontSize: 30, fontWeight: FontWeight.w600);
   final _tecMemo = TextEditingController();
 
-  BookDetail bookDetail; //nullable
+  BookDetail _bookDetail; //nullable
 
   @override
   void initState() {
     super.initState();
-    afterInit();
+    _afterInit();
   }
 
-  afterInit() async {
-    bookDetail = await GenTry.execute<BookDetail>(
+  _afterInit() async {
+    _bookDetail = await GenTry.execute<BookDetail>(
         () => _searchApi.detail(widget.book.isbn13));
     final note = await CacheMapIsolate().get("__NOTE__:${widget.book.isbn13}");
     if (note != null) {
@@ -50,7 +50,7 @@ class _DetailBookPageState extends State<DetailBookPage> {
     }
   }
 
-  Widget buildProperty(String name, String value) {
+  Widget _buildProperty(String name, String value) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(
@@ -62,7 +62,7 @@ class _DetailBookPageState extends State<DetailBookPage> {
     );
   }
 
-  Widget buildPropertyUrl(String name, String value) {
+  Widget _buildPropertyUrl(String name, String value) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: InkWell(
@@ -79,8 +79,8 @@ class _DetailBookPageState extends State<DetailBookPage> {
     );
   }
 
-  Widget buildBody() {
-    if (bookDetail == null) return LinearProgressIndicator();
+  Widget _buildBody() {
+    if (_bookDetail == null) return LinearProgressIndicator();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -88,19 +88,19 @@ class _DetailBookPageState extends State<DetailBookPage> {
         Card(
           child: Column(
             children: [
-              buildProperty('title', bookDetail.title),
-              buildProperty('subtitle', bookDetail.title),
-              buildProperty('authors', bookDetail.authors),
-              buildProperty('publisher', bookDetail.publisher),
-              buildProperty('isbn10', bookDetail.isbn10),
-              buildProperty('isbn13', bookDetail.isbn13),
-              buildProperty('pages', bookDetail.pages),
-              buildProperty('year', bookDetail.year),
-              buildProperty('rating', bookDetail.rating),
-              buildProperty('desc', bookDetail.desc),
-              buildProperty('price', bookDetail.price),
-              buildProperty('image', bookDetail.image),
-              buildPropertyUrl('url', bookDetail.url),
+              _buildProperty('title', _bookDetail.title),
+              _buildProperty('subtitle', _bookDetail.title),
+              _buildProperty('authors', _bookDetail.authors),
+              _buildProperty('publisher', _bookDetail.publisher),
+              _buildProperty('isbn10', _bookDetail.isbn10),
+              _buildProperty('isbn13', _bookDetail.isbn13),
+              _buildProperty('pages', _bookDetail.pages),
+              _buildProperty('year', _bookDetail.year),
+              _buildProperty('rating', _bookDetail.rating),
+              _buildProperty('desc', _bookDetail.desc),
+              _buildProperty('price', _bookDetail.price),
+              _buildProperty('image', _bookDetail.image),
+              _buildPropertyUrl('url', _bookDetail.url),
             ],
           ),
         ),
@@ -109,8 +109,8 @@ class _DetailBookPageState extends State<DetailBookPage> {
         Card(
           child: Column(
             children: [
-              if (bookDetail.pdfs.length == 0) Text('no pdf'),
-              ...(bookDetail.pdfs.map((e) => buildPropertyUrl(e.key, e.url))),
+              if (_bookDetail.pdfs.length == 0) Text('no pdf'),
+              ...(_bookDetail.pdfs.map((e) => _buildPropertyUrl(e.key, e.url))),
             ],
           ),
         ),
@@ -148,7 +148,7 @@ class _DetailBookPageState extends State<DetailBookPage> {
       body: SingleChildScrollView(
           child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: buildBody(),
+        child: _buildBody(),
       )),
     );
   }
