@@ -34,6 +34,12 @@ class SearchStore {
 
   SearchState state = SearchState.initState();
 
+  SearchStore() {
+    () async {
+      _streamController.add(state);
+    }();
+  }
+
   search(String query) async {
     _updateState(state.copyFrom(errorMessage: '', fetching: true));
     try {
