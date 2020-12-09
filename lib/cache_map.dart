@@ -1,5 +1,8 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 import 'dart:isolate';
+import 'package:path_provider/path_provider.dart';
 
 enum KeyNames { id, action, key, payload }
 
@@ -12,6 +15,14 @@ class CacheMap {
 
   dynamic get(String key) {
     return _cache[key];
+  }
+
+  injectMap(Map<String, dynamic> map) {
+    _cache.addEntries(map.entries);
+  }
+
+  String jsonify() {
+    return json.encode(_cache);
   }
 }
 
@@ -75,9 +86,22 @@ cacheIsolateImpl(SendPort sendPort) async {
   sendPort.send(receivePort.sendPort);
   final cacheMap = CacheMap();
 
+  final directory = await getApplicationDocumentsDirectory();
+  print(directory);
+  final file = File('${directory.path}/cache_map.json');
+  try {
+    if (await file.exists()) {
+      var filePayload = await file.readAsString();
+      cacheMap.injectMap(json.decode(filePayload));
+    }
+  } catch (_) {}
+
   await for (var msg in receivePort) {
     if (msg[KeyNames.action.index] == 'put') {
       cacheMap.put(msg[KeyNames.key.index], msg[KeyNames.payload.index]);
+      final payload = cacheMap.jsonify();
+      file.writeAsString(payload); //unwaited
+      //Persist
     } else if (msg[KeyNames.action.index] == 'get') {
       final result = cacheMap.get(msg[KeyNames.key.index]);
       sendPort.send([msg[KeyNames.id.index], result]);
