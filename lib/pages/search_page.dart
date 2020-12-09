@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:sb_bookshelf/entities/book.dart';
 import 'package:sb_bookshelf/stores/search_store.dart';
+
+import '../cache_image_file.dart';
 
 class SearchPage extends StatefulWidget {
   SearchPage({Key key}) : super(key: key);
@@ -17,7 +21,16 @@ class _SearchPageState extends State<SearchPage> {
     return Card(
       child: Row(
         children: [
-          Image.network(book.image), //TODO: Image Cache
+          FutureBuilder<File>(
+            future: CachedImageFile.getImageFile(book.image),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Image.file(snapshot.data);
+              } else {
+                return Text('downloading');
+              }
+            },
+          ),
           Expanded(
             child: Column(
               children: [
