@@ -8,7 +8,8 @@ void main() {
     di.putApiEndpoint(ApiEndpoint('https://api.itbook.store'));
     final store = SearchStore();
     await store.search("mongodb");
-    expect(store.state.books, isNotEmpty);
-    expect(store.state.books.first.title, equals('Practical MongoDB'));
+    expect(store.state.searchResult.books, isNotEmpty);
+    expect(store.state.searchResult.books.first.title,
+        equals('Practical MongoDB'));
   });
 }

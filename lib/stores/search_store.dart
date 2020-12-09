@@ -3,28 +3,26 @@ import 'dart:io';
 import 'package:meta/meta.dart';
 import 'package:sb_bookshelf/api/search_api.dart';
 import 'package:sb_bookshelf/entities/book.dart';
+import 'package:sb_bookshelf/entities/search_result.dart';
 import 'package:sb_bookshelf/gen_try.dart';
 
 class SearchState {
-  final List<Book> books;
+  final SearchResult searchResult; // Nulable
   final bool fetching;
-  final int page;
   final String errorMessage;
 
   factory SearchState.initState() =>
-      SearchState(page: 0, books: [], fetching: false, errorMessage: '');
+      SearchState(fetching: false, errorMessage: '', searchResult: null);
   SearchState(
-      {@required this.books,
-      @required this.page,
+      {@required this.searchResult,
       @required this.fetching,
       @required this.errorMessage});
   SearchState copyFrom(
-      {List<Book> books, int page, bool fetching, String errorMessage}) {
+      {bool fetching, String errorMessage, SearchResult searchResult}) {
     return SearchState(
-        books: books ?? this.books,
-        page: page ?? this.page,
         fetching: fetching ?? this.fetching,
-        errorMessage: errorMessage ?? this.errorMessage);
+        errorMessage: errorMessage ?? this.errorMessage,
+        searchResult: searchResult ?? this.searchResult);
   }
 }
 
@@ -39,34 +37,85 @@ class SearchStore {
   search(String query) async {
     _updateState(state.copyFrom(errorMessage: '', fetching: true));
     try {
-      final books = await GenTry.execute<List<Book>>(
+      final searchResult = await GenTry.execute<SearchResult>(
           () => _searchApi.initialQuery(query));
-      _updateState(state.copyFrom(books: books));
+      _updateState(state.copyFrom(searchResult: searchResult));
     } on OSError {
       _updateState(state.copyFrom(
           errorMessage: 'Cannot find the server (errNo: ${errorKey}000)',
-          books: <Book>[],
+          searchResult: null,
           fetching: false));
     } on SocketException {
       _updateState(state.copyFrom(
           errorMessage: 'Cannot reach to the server (errNo: ${errorKey}001)',
-          books: <Book>[],
+          searchResult: null,
           fetching: false));
     } on HttpException {
       _updateState(state.copyFrom(
           errorMessage: 'Cannot fetch from the server (errNo: ${errorKey}002)',
-          books: <Book>[],
+          searchResult: null,
           fetching: false));
     } on FormatException {
       _updateState(state.copyFrom(
           errorMessage:
               'Server returned an unepxected message (errNo: ${errorKey}003)',
-          books: <Book>[],
+          searchResult: null,
           fetching: false));
     } catch (e) {
       _updateState(state.copyFrom(
           errorMessage: 'Unknown error occured (errNo: ${errorKey}004)',
-          books: <Book>[],
+          searchResult: null,
+          fetching: false));
+    } finally {
+      _updateState(state.copyFrom(fetching: false));
+    }
+  }
+
+  fetchNextPage(String query) async {
+    if (state.fetching) return;
+    if (state.searchResult == null) return;
+    // to avoid concurrency issue and ready for null safety
+    final _searchResult = state.searchResult;
+    if (_searchResult.books.length >= int.parse(_searchResult.total)) {
+      return;
+      //TODO: MAXED
+    }
+
+    _updateState(state.copyFrom(errorMessage: '', fetching: true));
+    try {
+      final searchResult = await GenTry.execute<SearchResult>(() =>
+          _searchApi.nextPageQuery(query, int.parse(_searchResult.page) + 1));
+      final newSearchResult = _searchResult.copyFrom(
+          error: searchResult.error,
+          page: searchResult.page,
+          total: searchResult.total,
+          books: _searchResult.books..addAll(searchResult.books));
+      _updateState(state.copyFrom(searchResult: newSearchResult));
+    } on OSError {
+      _updateState(state.copyFrom(
+          errorMessage: 'Cannot find the server (errNo: ${errorKey}000)',
+          searchResult: null,
+          fetching: false));
+    } on SocketException {
+      _updateState(state.copyFrom(
+          errorMessage: 'Cannot reach to the server (errNo: ${errorKey}001)',
+          searchResult: null,
+          fetching: false));
+    } on HttpException {
+      _updateState(state.copyFrom(
+          errorMessage: 'Cannot fetch from the server (errNo: ${errorKey}002)',
+          searchResult: null,
+          fetching: false));
+    } on FormatException {
+      _updateState(state.copyFrom(
+          errorMessage:
+              'Server returned an unepxected message (errNo: ${errorKey}003)',
+          searchResult: null,
+          fetching: false));
+    } catch (e) {
+      _updateState(state.copyFrom(
+          errorMessage: 'Unknown error occured (errNo: ${errorKey}004)',
+          searchResult: null,
           fetching: false));
     } finally {
       _updateState(state.copyFrom(fetching: false));
@@ -79,6 +128,7 @@ class SearchStore {
   }
 
   void dispose() {
+    // TODO: call dispose from the outside class
     _streamController.close();
   }
 }

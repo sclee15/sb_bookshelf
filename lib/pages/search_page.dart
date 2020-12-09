@@ -16,6 +16,14 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   SearchStore searchStore = SearchStore();
   TextEditingController tecQuery = TextEditingController();
+  final _scrollController = ScrollController();
+  final _scrollThreshold = 300.0;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
 
   Widget buildBookCard(Book book) {
     return Card(
@@ -47,6 +55,14 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
+  void _onScroll() {
+    final maxScroll = _scrollController.position.maxScrollExtent;
+    final currentScroll = _scrollController.position.pixels;
+    if (maxScroll - currentScroll <= _scrollThreshold) {
+      searchStore.fetchNextPage(tecQuery.text);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,7 +71,10 @@ class _SearchPageState extends State<SearchPage> {
         children: [
           TextField(
             controller: tecQuery,
-            onSubmitted: (val) => searchStore.search(val),
+            onSubmitted: (val) {
+              searchStore.search(val);
+              _scrollController.jumpTo(0.0);
+            },
           ),
           StreamBuilder<SearchState>(
               stream: searchStore.stream,
@@ -77,9 +96,23 @@ class _SearchPageState extends State<SearchPage> {
 
               return Expanded(
                 child: ListView.builder(
-                  itemCount: snapshot.hasData ? snapshot.data.books.length : 0,
+                  controller: _scrollController,
+                  itemCount: snapshot.hasData
+                      ? snapshot.data.searchResult?.books?.length ?? 1
+                      : 1,
                   itemBuilder: (context, index) {
-                    return buildBookCard(snapshot.data.books.elementAt(index));
+                    final _bookCount =
+                        snapshot.data.searchResult?.books?.length ?? 0;
+                    if (index + 1 == _bookCount) {
+                      return Row(children: [
+                        Container(
+                            width: 60, child: CircularProgressIndicator()),
+                        Text('Looking for more books!')
+                      ]);
+                    } else {
+                      return buildBookCard(
+                          snapshot.data.searchResult.books.elementAt(index));
+                    }
                   },
                 ),
               );
