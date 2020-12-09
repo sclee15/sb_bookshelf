@@ -35,8 +35,6 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  build_runner: any #state mangement package excepton
-  mobx_codegen: ^1.1.2 #state mangement package excepton
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
