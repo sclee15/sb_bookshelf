@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:sb_bookshelf/api/search_api.dart';
 import 'package:sb_bookshelf/cache_map.dart';
 import 'package:sb_bookshelf/entities/book.dart';
@@ -35,6 +36,18 @@ class _DetailBookPageState extends State<DetailBookPage> {
     setState(() {});
   }
 
+  Future<void> _launchInBrowser(String url) async {
+    if (await canLaunch(url)) {
+      await launch(
+        url,
+        forceSafariVC: false,
+        forceWebView: false,
+      );
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
   Widget buildProperty(String name, String value) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -43,6 +56,23 @@ class _DetailBookPageState extends State<DetailBookPage> {
           Container(width: 150, child: Text(name)),
           Expanded(child: Text(value)),
         ],
+      ),
+    );
+  }
+
+  Widget buildPropertyUrl(String name, String value) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: InkWell(
+        onTap: () {
+          _launchInBrowser(value);
+        },
+        child: Row(
+          children: [
+            Container(width: 150, child: Text(name)),
+            Expanded(child: Text(value, style: TextStyle(color: Colors.blue))),
+          ],
+        ),
       ),
     );
   }
@@ -68,7 +98,7 @@ class _DetailBookPageState extends State<DetailBookPage> {
               buildProperty('desc', bookDetail.desc),
               buildProperty('price', bookDetail.price),
               buildProperty('image', bookDetail.image),
-              buildProperty('url', bookDetail.url),
+              buildPropertyUrl('url', bookDetail.url),
             ],
           ),
         ),
@@ -78,7 +108,7 @@ class _DetailBookPageState extends State<DetailBookPage> {
           child: Column(
             children: [
               if (bookDetail.pdfs.length == 0) Text('no pdf'),
-              ...(bookDetail.pdfs.map((e) => buildProperty(e.key, e.url))),
+              ...(bookDetail.pdfs.map((e) => buildPropertyUrl(e.key, e.url))),
             ],
           ),
         ),
