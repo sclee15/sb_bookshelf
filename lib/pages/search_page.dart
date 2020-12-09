@@ -73,7 +73,6 @@ class _SearchPageState extends State<SearchPage> {
             controller: tecQuery,
             onSubmitted: (val) {
               searchStore.search(val);
-              _scrollController.jumpTo(0.0);
             },
           ),
           StreamBuilder<SearchState>(

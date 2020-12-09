@@ -24,7 +24,13 @@ class CacheMapIsolate {
 
   final _initializeLock = Completer<Null>();
 
-  CacheMapIsolate() {
+  static final CacheMapIsolate _singleton = CacheMapIsolate._internal();
+
+  factory CacheMapIsolate() {
+    return _singleton;
+  }
+
+  CacheMapIsolate._internal() {
     afterInit();
   }
 
@@ -54,6 +60,7 @@ class CacheMapIsolate {
   }
 
   Future<dynamic> get(String key) async {
+    await _initializeLock.future;
     final id = _idCounter++;
     _sendPort.send([id, 'get', key]);
     final reply = await _receiveStream

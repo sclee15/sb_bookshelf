@@ -27,6 +27,17 @@ class Book {
         url: json[BookFieldNames.url] as String);
   }
 
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      "title": title,
+      "subtitle": subtitle,
+      "isbn13": isbn13,
+      "price": price,
+      "image": image,
+      "url": url
+    };
+  }
+
   // Normally I would like to use Freezed, but for the no 3rd party requrement, I will do it manually for immutable objects
   @override
   bool operator ==(Object other) =>

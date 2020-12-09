@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:meta/meta.dart';
 import 'package:sb_bookshelf/api/search_api.dart';
-import 'package:sb_bookshelf/entities/book.dart';
+import 'package:sb_bookshelf/cache_map.dart';
 import 'package:sb_bookshelf/entities/search_result.dart';
 import 'package:sb_bookshelf/gen_try.dart';
 
@@ -37,9 +37,17 @@ class SearchStore {
   search(String query) async {
     _updateState(state.copyFrom(errorMessage: '', fetching: true));
     try {
-      final searchResult = await GenTry.execute<SearchResult>(
-          () => _searchApi.initialQuery(query));
-      _updateState(state.copyFrom(searchResult: searchResult));
+      final cached = await CacheMapIsolate().get('__query:$query');
+      if (cached == null) {
+        final searchResult = await GenTry.execute<SearchResult>(
+            () => _searchApi.initialQuery(query));
+        _updateState(state.copyFrom(searchResult: searchResult));
+        CacheMapIsolate().put('__query:$query', searchResult.toMap());
+      } else {
+        print('using cache');
+        _updateState(
+            state.copyFrom(searchResult: SearchResult.fromMap(cached)));
+      }
     } on OSError {
       _updateState(state.copyFrom(
           errorMessage: 'Cannot find the server (errNo: ${errorKey}000)',
@@ -90,6 +98,7 @@ class SearchStore {
           page: searchResult.page,
           total: searchResult.total,
           books: _searchResult.books..addAll(searchResult.books));
+      CacheMapIsolate().put('__query:$query', newSearchResult.toMap());
       _updateState(state.copyFrom(searchResult: newSearchResult));
     } on OSError {
       _updateState(state.copyFrom(

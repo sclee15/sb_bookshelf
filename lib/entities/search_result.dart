@@ -38,6 +38,15 @@ class SearchResult {
     );
   }
 
+  Map<String, dynamic> toMap() {
+    return {
+      "error": error,
+      "total": total,
+      "page": page,
+      "books": books.map((e) => e.toMap()).toList()
+    };
+  }
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
