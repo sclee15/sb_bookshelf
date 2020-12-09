@@ -12,9 +12,8 @@ class SearchApi {
   ApiEndpoint apiEndPoint = di.apiEndpoint;
 
   Future<SearchResult> initialQuery(String query) async {
+    assert(query != null);
     final resource = apiEndPoint.host + '/1.0/search/$query';
-    //TODO: urlEncode Query for multiple keywords
-    //TODO: retryOnFail, Caching
     final resp = await http.get(resource);
     if (resp.statusCode != 200) {
       throw FormatException('server returned an unepxected message');
@@ -23,8 +22,9 @@ class SearchApi {
   }
 
   Future<SearchResult> nextPageQuery(String query, int page) async {
+    assert(query != null);
+    assert(page != null);
     final resource = apiEndPoint.host + '/1.0/search/$query/$page';
-    //TODO: urlEncode Query for multiple keywords
     final resp = await http.get(resource);
     if (resp.statusCode != 200) {
       throw FormatException('server returned an unepxected message');
@@ -33,7 +33,7 @@ class SearchApi {
   }
 
   Future<BookDetail> detail(String isbn13) async {
-    // TODO: assert isbn13 is not null
+    assert(isbn13 != null);
     final resource = apiEndPoint.host + '/1.0/books/$isbn13';
     final resp = await http.get(resource);
     if (resp.statusCode != 200) {
@@ -44,12 +44,14 @@ class SearchApi {
 }
 
 SearchResult _parseSearchResult(String jsonString) {
+  assert(jsonString != null);
   final Map<String, dynamic> map = json.decode(jsonString);
   final result = SearchResult.fromMap(map);
   return result;
 }
 
 BookDetail _parseBookDetail(String jsonString) {
+  assert(jsonString != null);
   final Map<String, dynamic> map = json.decode(jsonString);
   final result = BookDetail.fromMap(map);
   return result;

@@ -44,7 +44,6 @@ class SearchStore {
         _updateState(state.copyFrom(searchResult: searchResult));
         CacheMapIsolate().put('__query:$query', searchResult.toMap());
       } else {
-        print('using cache');
         _updateState(
             state.copyFrom(searchResult: SearchResult.fromMap(cached)));
       }
@@ -86,7 +85,6 @@ class SearchStore {
     final _searchResult = state.searchResult;
     if (_searchResult.books.length >= int.parse(_searchResult.total)) {
       return;
-      //TODO: MAXED
     }
 
     _updateState(state.copyFrom(errorMessage: '', fetching: true));
@@ -137,7 +135,6 @@ class SearchStore {
   }
 
   void dispose() {
-    // TODO: call dispose from the outside class
     _streamController.close();
   }
 }

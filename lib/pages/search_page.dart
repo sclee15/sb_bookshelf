@@ -26,6 +26,12 @@ class _SearchPageState extends State<SearchPage> {
     _scrollController.addListener(_onScroll);
   }
 
+  @override
+  void dispose() {
+    searchStore.dispose();
+    super.dispose();
+  }
+
   Widget buildBookCard(Book book) {
     return InkWell(
       onTap: () {

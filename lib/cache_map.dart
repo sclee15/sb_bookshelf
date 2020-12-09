@@ -55,7 +55,6 @@ class CacheMapIsolate {
       }
     });
     Isolate.spawn(cacheIsolateImpl, _receivePort.sendPort);
-    print("afterinit");
   }
 
   dispose() {
@@ -87,7 +86,6 @@ cacheIsolateImpl(SendPort sendPort) async {
   final cacheMap = CacheMap();
 
   final directory = await getApplicationDocumentsDirectory();
-  print(directory);
   final file = File('${directory.path}/cache_map.json');
   try {
     if (await file.exists()) {

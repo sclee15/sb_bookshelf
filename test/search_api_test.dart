@@ -2,7 +2,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:sb_bookshelf/api/api_endpoint.dart';
 import 'package:sb_bookshelf/api/search_api.dart';
 import 'package:sb_bookshelf/di.dart';
-import 'package:sb_bookshelf/entities/search_result.dart';
 
 void main() {
   test('SearchApi.initialQuery', () async {
