@@ -68,6 +68,13 @@ class _SearchPageState extends State<SearchPage> {
           StreamBuilder<SearchState>(
             stream: searchStore.stream,
             builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return LinearProgressIndicator();
+              } else if (snapshot.hasData &&
+                  snapshot.data.errorMessage.isNotEmpty) {
+                return Text(snapshot.data.errorMessage);
+              }
+
               return Expanded(
                 child: ListView.builder(
                   itemCount: snapshot.hasData ? snapshot.data.books.length : 0,
