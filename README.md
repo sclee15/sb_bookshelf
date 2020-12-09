@@ -1,16 +1,24 @@
-# sb_bookshelf
+# A Bookshelf app
 
-A new Flutter project.
+A bookshelf app that talks with https://api.itbook.store
 
-## Getting Started
 
-This project is a starting point for a Flutter application.
+## Components
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+* ApiEndpoint
+Allow change host endpoint easily by switching main files
+* SearchApi
+Actual communication logic
+* Entities (PODO)
+Book, BookDetail, SearchResults, and etc..
+* Pages
+DetailBookPage, SearchPage
+* Store
+A custom Bloc Pattern for SearchPage
+* Cache
+CacheImageFile - a future based image cache helper
+CacheMap - a Isolate based Map Persistnace Storage
+* Dependency Injection
+DI
+* GenTry
+General retrying wrapper
