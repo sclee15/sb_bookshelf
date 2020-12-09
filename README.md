@@ -2,6 +2,8 @@
 
 A bookshelf app that talks with https://api.itbook.store
 
+## VIDEO
+https://youtu.be/f0fDd3Lohmo
 
 ## Components
 
